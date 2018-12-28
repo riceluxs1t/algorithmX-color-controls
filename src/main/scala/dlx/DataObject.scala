@@ -9,4 +9,4 @@ package dlx
   * @param D link to the below.
   * @param C link to the list header.
   */
-class DataObject(var L: DataObject, var R: DataObject, var U: DataObject, var D: DataObject, var C: DataObject)
+class DataObject(var L: DataObject, var R: DataObject, var U: DataObject, var D: DataObject, var C: DataObject, var optionId: Int)

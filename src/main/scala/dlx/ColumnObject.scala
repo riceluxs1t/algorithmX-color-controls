@@ -20,5 +20,6 @@ class ColumnObject(
   R: DataObject,
   U: DataObject,
   D: DataObject,
-  C: DataObject
-) extends DataObject(L, R, U, D, C)
+  C: DataObject,
+  optionId: Int
+) extends DataObject(L, R, U, D, C, optionId)

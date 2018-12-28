@@ -3,9 +3,60 @@ package dlx
 import scala.collection.mutable.ListBuffer
 
 object DLX {
+  def makeHeadFromMatrix(inputMatrix: Array[Array[Int]]): ColumnObject = {
+    val head: ColumnObject = new ColumnObject(false, 0, -1, null, null, null, null, null, -1)
+    head.L = head
+    head.R = head
+    head.U = head
+    head.D = head
+
+    for (columnIndex <- inputMatrix(0).indices) {
+      val col: ColumnObject = new ColumnObject(true, columnIndex, 0, null, null, null, null, null, -1)
+      col.L = head.L
+      col.R = head
+      col.U = col
+      col.D = col
+      head.L.R = col
+      head.L = col
+    }
+
+    for (rowIndex <- inputMatrix.indices) {
+      var (currentColumn, dataRow) = (head.R, Array[DataObject]())
+
+      for (columnIndex <- inputMatrix(rowIndex).indices) {
+        if (inputMatrix(rowIndex)(columnIndex) != 0) {
+          val newDataObject = new DataObject(null, null, null, null, null, rowIndex)
+          newDataObject.L = newDataObject
+          newDataObject.R = newDataObject
+          newDataObject.U = currentColumn.U
+          newDataObject.D = currentColumn
+          newDataObject.C = currentColumn
+          currentColumn.U.D = newDataObject
+          currentColumn.U = newDataObject
+
+          currentColumn.asInstanceOf[ColumnObject].S += 1
+          dataRow :+= newDataObject
+        }
+        currentColumn = currentColumn.R
+      }
+
+      if (dataRow.length > 0) {
+        val rowHead = dataRow(0)
+        for (columnIndex <- 1 until dataRow.length) {
+          dataRow(columnIndex).L = rowHead.L
+          dataRow(columnIndex).R = rowHead
+          rowHead.L.R = dataRow(columnIndex)
+          rowHead.L = dataRow(columnIndex)
+        }
+      }
+    }
+
+    head
+  }
+
   def chooseColumnWithMinimumS(head: ColumnObject): ColumnObject = {
-    var curColumn: ColumnObject = head
-    var chosenColumn: ColumnObject = head
+    var curColumn: ColumnObject = head.R.asInstanceOf[ColumnObject]
+    var chosenColumn: ColumnObject = head.R.asInstanceOf[ColumnObject]
 
     while (curColumn.R != head) {
       curColumn = curColumn.R.asInstanceOf[ColumnObject]
@@ -65,6 +116,7 @@ object DLX {
     }
 
     val columnChosen = chooseColumnWithMinimumS(head)
+
     if (columnChosen.S > 0) {
       coverColumn(columnChosen)
 
@@ -90,15 +142,15 @@ object DLX {
 
         r = r.D
       }
-    }
 
-    uncoverColumn(columnChosen)
+      uncoverColumn(columnChosen)
+    }
   }
 
   def printSolution(solution: ListBuffer[DataObject]): Unit = {
     System.out.println("new solution found.")
     for (dataObject <- solution.toList) {
-      System.out.println(dataObject.C.asInstanceOf[ColumnObject].N)
+      System.out.println(dataObject.optionId)
     }
   }
 
