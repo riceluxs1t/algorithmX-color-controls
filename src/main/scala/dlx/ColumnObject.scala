@@ -5,7 +5,7 @@ package dlx
  *
   * @param isPrimary true if a primary column that must be covered. false otherwise.
   * @param N the identifier of an item.
-  * @param S the number of ones if isPrimary is true. null otherwise.
+  * @param S the number of ones if isPrimary is true. -1 otherwise.
   * @param L link to the left entry.
   * @param R link to the right entry.
   * @param U link to the above entry.

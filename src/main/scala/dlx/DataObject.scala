@@ -8,5 +8,13 @@ package dlx
   * @param U link to the above.
   * @param D link to the below.
   * @param C link to the list header.
+  * @param optionId the option id this data object belongs to.
   */
-class DataObject(var L: DataObject, var R: DataObject, var U: DataObject, var D: DataObject, var C: DataObject, var optionId: Int)
+class DataObject(
+  var L: DataObject,
+  var R: DataObject,
+  var U: DataObject,
+  var D: DataObject,
+  var C: DataObject,
+  var optionId: Int
+)

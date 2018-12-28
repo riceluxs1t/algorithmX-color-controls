@@ -110,9 +110,9 @@ object DLX {
     head.R == head
   }
 
-  def search(solution: ListBuffer[DataObject], head: ColumnObject): Unit = {
+  def search(currentSolution: ListBuffer[DataObject], foundSolutions: ListBuffer[List[Int]], head: ColumnObject): Unit = {
     if (isSolutionFound(head)) {
-      printSolution(solution)
+      foundSolutions += currentSolution.map(_.optionId).toList
     }
 
     val columnChosen = chooseColumnWithMinimumS(head)
@@ -122,7 +122,7 @@ object DLX {
 
       var r = columnChosen.D
       while (r != columnChosen) {
-        solution += r
+        currentSolution += r
 
         var j = r.R
         while (j != r) {
@@ -130,9 +130,9 @@ object DLX {
           j = j.R
         }
 
-        search(solution, head)
+        search(currentSolution, foundSolutions, head)
 
-        solution -= r
+        currentSolution -= r
         var c = r.C
         j = r.L
         while (j != r) {
@@ -147,15 +147,17 @@ object DLX {
     }
   }
 
-  def printSolution(solution: ListBuffer[DataObject]): Unit = {
+  def printSolution(solution: ListBuffer[Int]): Unit = {
     System.out.println("new solution found.")
-    for (dataObject <- solution.toList) {
-      System.out.println(dataObject.optionId)
+    for (optionId <- solution.toList) {
+      System.out.println(optionId)
     }
   }
 
-  def solve(head: ColumnObject): Unit = {
+  def solve(head: ColumnObject): List[List[Int]] = {
     val solution = new ListBuffer[DataObject]
-    search(solution, head)
+    val foundSolutions = new ListBuffer[List[Int]]
+    search(solution, foundSolutions, head)
+    foundSolutions.toList
   }
 }

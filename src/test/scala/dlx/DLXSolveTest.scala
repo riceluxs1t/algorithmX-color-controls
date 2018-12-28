@@ -14,7 +14,9 @@ class DLXSolveTest extends FunSpec with Matchers {
 
         val head = DLX.makeHeadFromMatrix(matrix)
 
-        DLX.solve(head)
+        val ans = DLX.solve(head).map(_.toSet).toSet
+
+        ans should be (Set(Set(0)))
       }
     }
 
@@ -31,7 +33,29 @@ class DLXSolveTest extends FunSpec with Matchers {
 
         val head = DLX.makeHeadFromMatrix(matrix)
 
-        DLX.solve(head)
+        val ans = DLX.solve(head).map(_.toSet).toSet
+
+        ans should be (Set(Set(1, 3, 5)))
+      }
+    }
+
+    describe("A modified wikipedia matrix") {
+      it("should be sets of options (1, 3, 5) and option (6)") {
+        val matrix = Array(
+          Array(1, 0, 0, 1, 0, 0, 1),
+          Array(1, 0, 0, 1, 0, 0, 0),
+          Array(0, 0, 0, 1, 1, 0, 1),
+          Array(0, 0, 1, 0, 1, 1, 0),
+          Array(0, 1, 1, 0, 0, 1, 1),
+          Array(0, 1, 0, 0, 0, 0, 1),
+          Array(1, 1, 1, 1, 1, 1, 1)
+        )
+
+        val head = DLX.makeHeadFromMatrix(matrix)
+
+        val ans = DLX.solve(head).map(_.toSet).toSet
+
+        ans should be (Set(Set(1, 3, 5), Set(6)))
       }
     }
   }
