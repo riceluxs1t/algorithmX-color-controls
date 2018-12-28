@@ -4,40 +4,35 @@ import scala.collection.mutable.ListBuffer
 
 object DLX {
   def makeHeadFromMatrix(inputMatrix: Array[Array[Int]]): ColumnObject = {
-    val head: ColumnObject = new ColumnObject(false, 0, -1, null, null, null, null, null, -1)
-    head.L = head
-    head.R = head
-    head.U = head
-    head.D = head
+    val head: ColumnObject = ColumnObject.makeHead()
+
+    val headData = DataObject.newLinkedListNode(-1)
+    headData.C = head
+    head.data = headData
 
     for (columnIndex <- inputMatrix(0).indices) {
-      val col: ColumnObject = new ColumnObject(true, columnIndex, 0, null, null, null, null, null, -1)
-      col.L = head.L
-      col.R = head
-      col.U = col
-      col.D = col
-      head.L.R = col
-      head.L = col
+      val newColumn: ColumnObject = ColumnObject.makeNewPrimaryColumn(columnIndex)
+      newColumn.data.L = head.data.L
+      newColumn.data.R = head.data
+      head.data.L.R = newColumn.data
+      head.data.L = newColumn.data
     }
 
     for (rowIndex <- inputMatrix.indices) {
-      var (currentColumn, dataRow) = (head.R, Array[DataObject]())
+      var (currentColumnData, dataRow) = (head.data.R, Array[DataObject]())
 
       for (columnIndex <- inputMatrix(rowIndex).indices) {
         if (inputMatrix(rowIndex)(columnIndex) != 0) {
-          val newDataObject = new DataObject(null, null, null, null, null, rowIndex)
-          newDataObject.L = newDataObject
-          newDataObject.R = newDataObject
-          newDataObject.U = currentColumn.U
-          newDataObject.D = currentColumn
-          newDataObject.C = currentColumn
-          currentColumn.U.D = newDataObject
-          currentColumn.U = newDataObject
-
-          currentColumn.asInstanceOf[ColumnObject].S += 1
+          val newDataObject = DataObject.newLinkedListNode(rowIndex)
+          newDataObject.U = currentColumnData.U
+          newDataObject.D = currentColumnData
+          newDataObject.C = currentColumnData.C
+          currentColumnData.U.D = newDataObject
+          currentColumnData.U = newDataObject
+          currentColumnData.C.S += 1
           dataRow :+= newDataObject
         }
-        currentColumn = currentColumn.R
+        currentColumnData = currentColumnData.R
       }
 
       if (dataRow.length > 0) {
@@ -55,31 +50,29 @@ object DLX {
   }
 
   def chooseColumnWithMinimumS(head: ColumnObject): ColumnObject = {
-    var curColumn: ColumnObject = head.R.asInstanceOf[ColumnObject]
-    var chosenColumn: ColumnObject = head.R.asInstanceOf[ColumnObject]
+    var curColumnData: DataObject = head.data.R
+    var chosenColumn: ColumnObject = head.data.R.C
 
-    while (curColumn.R != head) {
-      curColumn = curColumn.R.asInstanceOf[ColumnObject]
-      chosenColumn = if (curColumn.isPrimary && curColumn.S < chosenColumn.S) curColumn else chosenColumn
+    while (curColumnData.R != head.data) {
+      curColumnData = curColumnData.R
+      chosenColumn = if (curColumnData.C.isPrimary && curColumnData.C.S < chosenColumn.S) curColumnData.C else chosenColumn
     }
     chosenColumn
   }
 
-  def chooseColumnNaive(head: ColumnObject): ColumnObject = head.R.asInstanceOf[ColumnObject]
-
   def coverColumn(c: ColumnObject): Unit = {
     require(c.isPrimary)
 
-    c.R.L = c.L
-    c.L.R = c.R
+    c.data.R.L = c.data.L
+    c.data.L.R = c.data.R
 
-    var i = c.D
-    while (i != c) {
+    var i = c.data.D
+    while (i != c.data) {
       var j = i.R
       while (j != i) {
         j.D.U = j.U
         j.U.D = j.D
-        j.C.asInstanceOf[ColumnObject].S -= 1
+        j.C.S -= 1
 
         j = j.R
       }
@@ -88,11 +81,11 @@ object DLX {
   }
 
   def uncoverColumn(c: ColumnObject): Unit = {
-    var i = c.U
-    while (i != c) {
+    var i = c.data.U
+    while (i != c.data) {
       var j = i.L
       while (j != i) {
-        j.C.asInstanceOf[ColumnObject].S += 1
+        j.C.S += 1
         j.D.U = j
         j.U.D = j
 
@@ -102,12 +95,12 @@ object DLX {
       i = i.U
     }
 
-    c.R.L = c
-    c.L.R = c
+    c.data.R.L = c.data
+    c.data.L.R = c.data
   }
 
   def isSolutionFound(head: ColumnObject): Boolean = {
-    head.R == head
+    head.data.R == head.data
   }
 
   def search(currentSolution: ListBuffer[DataObject], foundSolutions: ListBuffer[List[Int]], head: ColumnObject): Unit = {
@@ -120,13 +113,13 @@ object DLX {
     if (columnChosen.S > 0) {
       coverColumn(columnChosen)
 
-      var r = columnChosen.D
-      while (r != columnChosen) {
+      var r = columnChosen.data.D
+      while (r != columnChosen.data) {
         currentSolution += r
 
         var j = r.R
         while (j != r) {
-          coverColumn(j.C.asInstanceOf[ColumnObject])
+          coverColumn(j.C)
           j = j.R
         }
 
@@ -136,7 +129,7 @@ object DLX {
         var c = r.C
         j = r.L
         while (j != r) {
-          uncoverColumn(j.C.asInstanceOf[ColumnObject])
+          uncoverColumn(j.C)
           j = j.L
         }
 
