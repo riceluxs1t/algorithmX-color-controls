@@ -13,7 +13,7 @@ class DLXSolveTest extends FunSpec with Matchers {
 
         val head = DLX.makeHeadFromMatrix(matrix)
 
-        val ans = DLX.solve(head).map(_.toSet).toSet
+        val ans = DLX.solve(head)
 
         ans should be (Set(Set(0)))
       }
@@ -32,7 +32,7 @@ class DLXSolveTest extends FunSpec with Matchers {
 
         val head = DLX.makeHeadFromMatrix(matrix)
 
-        val ans = DLX.solve(head).map(_.toSet).toSet
+        val ans = DLX.solve(head)
 
         ans should be (Set(Set(1, 3, 5)))
       }
@@ -55,7 +55,7 @@ class DLXSolveTest extends FunSpec with Matchers {
 
         val head = DLX.makeHeadFromMatrix(matrix)
 
-        val ans = DLX.solve(head).map(_.toSet).toSet
+        val ans = DLX.solve(head)
 
         ans should be (
           Set(

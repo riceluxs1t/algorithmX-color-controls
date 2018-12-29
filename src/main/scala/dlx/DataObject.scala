@@ -17,11 +17,9 @@ class DataObject(
   var D: DataObject,
   var C: ColumnObject,
   val optionId: Option[Int]
-)
-//    newColumn.data.L = head.L
-//    newColumn.data.R = head.data
-//    head.data.L.R = newColumn.data
-//    head.data.L = newColumn.data
+) {
+  def S: Int = C.S
+}
 
 object DataObject {
   def newLinkedListNode(optionId: Option[Int], columnObject: ColumnObject): DataObject = {
