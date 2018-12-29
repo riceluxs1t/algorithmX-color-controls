@@ -9,25 +9,28 @@ package dlx
   */
 case class ColumnObject(
   isPrimary: Boolean,
-  N: Int,
+  N: Option[Int],
   var S: Int,
   var data: DataObject
-)
+) {
+  def L: DataObject = data.L
+  def R: DataObject = data.R
+  def U: DataObject = data.U
+  def D: DataObject = data.D
+}
 
 object ColumnObject {
   def makeHead(): ColumnObject = {
-    ColumnObject(false, 0, -1, null)
+    makeColumn(isPrimary = false, Option.empty)
   }
 
-  def makeNewPrimaryColumn(N: Int): ColumnObject = {
-    val columnNewPrimary = ColumnObject(true, N, 0, null)
-    val newData = new DataObject(null, null, null, null, null, -1)
-    newData.L = newData
-    newData.R = newData
-    newData.U = newData
-    newData.D = newData
-    newData.C = columnNewPrimary
-    columnNewPrimary.data = newData
-    columnNewPrimary
+  def makeColumn(isPrimary: Boolean, N: Option[Int]): ColumnObject = {
+    val columnNew = ColumnObject(isPrimary, N, 0, null)
+    val newData = DataObject.newLinkedListNode(Option.empty, columnNew)
+    columnNew.data = newData
+
+    columnNew
   }
+
+
 }

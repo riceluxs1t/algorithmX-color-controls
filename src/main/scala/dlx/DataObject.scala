@@ -16,22 +16,21 @@ class DataObject(
   var U: DataObject,
   var D: DataObject,
   var C: ColumnObject,
-  val optionId: Int
-) {
-//  def withL(newL: DataObject): DataObject = DataObject(newL, R, U, D, C, optionId)
-//  def withR(newR: DataObject): DataObject = DataObject(L, newR, U, D, C, optionId)
-//  def withU(newU: DataObject): DataObject = DataObject(L, R, newU, D, C, optionId)
-//  def withD(newD: DataObject): DataObject = DataObject(L, R, U, newD, C, optionId)
-//  def withC(newC: ColumnObject): DataObject = DataObject(L, R, U, D, newC, optionId)
-}
+  val optionId: Option[Int]
+)
+//    newColumn.data.L = head.L
+//    newColumn.data.R = head.data
+//    head.data.L.R = newColumn.data
+//    head.data.L = newColumn.data
 
 object DataObject {
-  def newLinkedListNode(optionId: Int): DataObject = {
+  def newLinkedListNode(optionId: Option[Int], columnObject: ColumnObject): DataObject = {
     val newHead = new DataObject(null, null, null, null, null, optionId)
     newHead.L = newHead
     newHead.R = newHead
     newHead.U = newHead
     newHead.D = newHead
+    newHead.C = columnObject
     newHead
   }
 }

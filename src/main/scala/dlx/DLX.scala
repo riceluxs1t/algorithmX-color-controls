@@ -6,52 +6,42 @@ object DLX {
   def makeHeadFromMatrix(inputMatrix: Array[Array[Int]]): ColumnObject = {
     val head: ColumnObject = ColumnObject.makeHead()
 
-    val headData = DataObject.newLinkedListNode(-1)
-    headData.C = head
-    head.data = headData
-
-    for (columnIndex <- inputMatrix(0).indices) {
-      val newColumn: ColumnObject = ColumnObject.makeNewPrimaryColumn(columnIndex)
-      newColumn.data.L = head.data.L
-      newColumn.data.R = head.data
-      head.data.L.R = newColumn.data
-      head.data.L = newColumn.data
-    }
+    inputMatrix(0).indices.foreach(
+      columnIndex => {
+        val newColumn: ColumnObject = ColumnObject.makeColumn(
+          isPrimary = true,
+          N = Option(columnIndex)
+        )
+        appendHorizontally(newColumn.data, head.data)
+      }
+    )
 
     for (rowIndex <- inputMatrix.indices) {
-      var (currentColumnData, dataRow) = (head.data.R, Array[DataObject]())
+      var (currentColumnHead, currentRowOfDataObjects) = (head.R, ListBuffer[DataObject]())
 
       for (columnIndex <- inputMatrix(rowIndex).indices) {
         if (inputMatrix(rowIndex)(columnIndex) != 0) {
-          val newDataObject = DataObject.newLinkedListNode(rowIndex)
-          newDataObject.U = currentColumnData.U
-          newDataObject.D = currentColumnData
-          newDataObject.C = currentColumnData.C
-          currentColumnData.U.D = newDataObject
-          currentColumnData.U = newDataObject
-          currentColumnData.C.S += 1
-          dataRow :+= newDataObject
+          val newDataObject = DataObject.newLinkedListNode(Option(rowIndex), currentColumnHead.C)
+
+          appendVertically(newDataObject, currentColumnHead)
+          currentRowOfDataObjects :+= newDataObject
         }
-        currentColumnData = currentColumnData.R
+        currentColumnHead = currentColumnHead.R
       }
 
-      if (dataRow.length > 0) {
-        val rowHead = dataRow(0)
-        for (columnIndex <- 1 until dataRow.length) {
-          dataRow(columnIndex).L = rowHead.L
-          dataRow(columnIndex).R = rowHead
-          rowHead.L.R = dataRow(columnIndex)
-          rowHead.L = dataRow(columnIndex)
-        }
-      }
+      val currentRowHead = currentRowOfDataObjects.head
+
+      currentRowOfDataObjects.slice(1, currentRowOfDataObjects.length).foreach(
+        eachData => appendHorizontally(eachData, currentRowHead)
+      )
     }
 
     head
   }
 
   def chooseColumnWithMinimumS(head: ColumnObject): ColumnObject = {
-    var curColumnData: DataObject = head.data.R
-    var chosenColumn: ColumnObject = head.data.R.C
+    var curColumnData: DataObject = head.R
+    var chosenColumn: ColumnObject = head.R.C
 
     while (curColumnData.R != head.data) {
       curColumnData = curColumnData.R
@@ -63,10 +53,10 @@ object DLX {
   def coverColumn(c: ColumnObject): Unit = {
     require(c.isPrimary)
 
-    c.data.R.L = c.data.L
-    c.data.L.R = c.data.R
+    c.data.R.L = c.L
+    c.data.L.R = c.R
 
-    var i = c.data.D
+    var i = c.D
     while (i != c.data) {
       var j = i.R
       while (j != i) {
@@ -81,7 +71,7 @@ object DLX {
   }
 
   def uncoverColumn(c: ColumnObject): Unit = {
-    var i = c.data.U
+    var i = c.U
     while (i != c.data) {
       var j = i.L
       while (j != i) {
@@ -100,12 +90,12 @@ object DLX {
   }
 
   def isSolutionFound(head: ColumnObject): Boolean = {
-    head.data.R == head.data
+    head.R == head.data
   }
 
   def search(currentSolution: ListBuffer[DataObject], foundSolutions: ListBuffer[List[Int]], head: ColumnObject): Unit = {
     if (isSolutionFound(head)) {
-      foundSolutions += currentSolution.map(_.optionId).toList
+      foundSolutions += currentSolution.map(_.optionId.get).toList
     }
 
     val columnChosen = chooseColumnWithMinimumS(head)
@@ -113,7 +103,7 @@ object DLX {
     if (columnChosen.S > 0) {
       coverColumn(columnChosen)
 
-      var r = columnChosen.data.D
+      var r = columnChosen.D
       while (r != columnChosen.data) {
         currentSolution += r
 
@@ -140,17 +130,27 @@ object DLX {
     }
   }
 
-  def printSolution(solution: ListBuffer[Int]): Unit = {
-    System.out.println("new solution found.")
-    for (optionId <- solution.toList) {
-      System.out.println(optionId)
-    }
-  }
-
   def solve(head: ColumnObject): List[List[Int]] = {
     val solution = new ListBuffer[DataObject]
     val foundSolutions = new ListBuffer[List[Int]]
     search(solution, foundSolutions, head)
     foundSolutions.toList
+  }
+
+  private def appendHorizontally(that: DataObject, head: DataObject): Unit = {
+    that.L = head.L
+    that.R = head
+
+    head.L.R = that
+    head.L = that
+  }
+
+  private def appendVertically(that: DataObject, head: DataObject): Unit = {
+    that.U = head.U
+    that.D = head
+
+    head.U.D = that
+    head.U = that
+    head.C.S += 1
   }
 }

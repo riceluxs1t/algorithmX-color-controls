@@ -1,8 +1,8 @@
 package dlx
 
 import org.scalatest.{FunSpec, Matchers}
-//
-//class DLXMakeHeadFromMatrixTest extends FunSpec with Matchers {
+
+class DLXMakeHeadFromMatrixTest extends FunSpec with Matchers {
 //  describe("MakeHeadFromMatrix") {
 //    describe("when an empty matrix is given") {
 //      it("should be a data object with just columns") {
@@ -14,20 +14,20 @@ import org.scalatest.{FunSpec, Matchers}
 //        val head = DLX.makeHeadFromMatrix(matrix)
 //
 //        head.isPrimary should be (false)
-//        head.S should be (-1)
-//        head.R should not be head
-//        head.R.R should not be head
-//        head.R.R.R should be (head)
-//        head.L should not be head
-//        head.L.R should be (head)
+//        head.S should be (0)
+//        head.R should not be head.data
+//        head.R.R should not be head.data
+//        head.R.R.R should be (head.data)
+//        head.L should not be head.data
+//        head.L.R should be (head.data)
 //
-//        head.R.asInstanceOf[ColumnObject].S should be (0)
-//        head.R.asInstanceOf[ColumnObject].D should be (head.R)
-//        head.R.asInstanceOf[ColumnObject].U should be (head.R)
+//        head.R.C.S should be (0)
+//        head.R.D should be (head.R)
+//        head.R.U should be (head.R)
 //
-//        head.R.R.asInstanceOf[ColumnObject].S should be (0)
-//        head.R.R.asInstanceOf[ColumnObject].D should be (head.R.R)
-//        head.R.R.asInstanceOf[ColumnObject].U should be (head.R.R)
+//        head.R.R.C.S should be (0)
+//        head.R.R.D should be (head.R.R)
+//        head.R.R.U should be (head.R.R)
 //      }
 //    }
 //  }
@@ -68,4 +68,4 @@ import org.scalatest.{FunSpec, Matchers}
 //      }
 //    }
 //  }
-//}
+}

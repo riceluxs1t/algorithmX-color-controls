@@ -1,6 +1,6 @@
 package dlx
 
-import org.scalatest._
+import org.scalatest.{FunSpec, Matchers}
 
 class DLXChooseColumnWithMinimumSTest extends FunSpec with Matchers {
   describe("ColumnWithMinimumS") {
@@ -14,7 +14,7 @@ class DLXChooseColumnWithMinimumSTest extends FunSpec with Matchers {
         val head = DLX.makeHeadFromMatrix(matrix)
 
         DLX.chooseColumnWithMinimumS(head).S should be (2)
-        DLX.chooseColumnWithMinimumS(head).N should be (0)
+        DLX.chooseColumnWithMinimumS(head).N should be (Option(0))
       }
     }
 
@@ -28,7 +28,7 @@ class DLXChooseColumnWithMinimumSTest extends FunSpec with Matchers {
         val head = DLX.makeHeadFromMatrix(matrix)
 
         DLX.chooseColumnWithMinimumS(head).S should be (1)
-        DLX.chooseColumnWithMinimumS(head).N should be (0)
+        DLX.chooseColumnWithMinimumS(head).N should be (Option(0))
       }
     }
 
@@ -42,7 +42,7 @@ class DLXChooseColumnWithMinimumSTest extends FunSpec with Matchers {
         val head = DLX.makeHeadFromMatrix(matrix)
 
         DLX.chooseColumnWithMinimumS(head).S should be (1)
-        DLX.chooseColumnWithMinimumS(head).N should be (1)
+        DLX.chooseColumnWithMinimumS(head).N should be (Option(1))
       }
     }
   }
