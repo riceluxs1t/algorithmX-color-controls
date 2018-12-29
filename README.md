@@ -7,6 +7,7 @@ Note that the color control part is a new extension to his original DLX paper (h
 # Helpful references
 
 AlgorithmX Wikipedia page (https://en.wikipedia.org/wiki/Knuth%27s_Algorithm_X).
+
 2018 Christmas Lecture Youtube link (https://www.youtube.com/watch?time_continue=215&v=t9OcDYfHqOk).
 
 # Color Controls
