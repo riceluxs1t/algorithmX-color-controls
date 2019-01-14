@@ -31,6 +31,4 @@ object ColumnObject {
 
     columnNew
   }
-
-
 }
